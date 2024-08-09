@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class PlayerCtrl : MonoBehaviour
 {
-    private Transform tr;
+    [SerializeField] private Transform tr;
+    public float moveSpeed = 8.0f;
 
     // Start is called before the first frame update
     void Start()
@@ -21,9 +22,7 @@ public class PlayerCtrl : MonoBehaviour
         Debug.Log("h=" + h);
         Debug.Log("v=" + v);
 
-        //transform.position += new Vector3(0, 0, 1);
-        //transform.position += Vector3.forward * 1;
-
-        tr.position += Vector3.forward * 1;
+        Vector3 moveDir = (Vector3.forward * v) + (Vector3.right * h);
+        tr.Translate(moveDir.normalized * moveSpeed * Time.deltaTime);
     }
 }
