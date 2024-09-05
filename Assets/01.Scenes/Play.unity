@@ -1492,6 +1492,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfb48b8433ab97d4d846cd4dbf860581, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  state: 0
+  traceDist: 10
+  attackDist: 2
+  isDie: 0
 --- !u!195 &1009597533
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -2690,6 +2694,10 @@ PrefabInstance:
     - target: {fileID: 6747167379436411850, guid: 64daf87a2787e034dbf593b2dfc1735c, type: 3}
       propertyPath: m_Name
       value: Wall_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6747167379436411850, guid: 64daf87a2787e034dbf593b2dfc1735c, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 64daf87a2787e034dbf593b2dfc1735c, type: 3}
