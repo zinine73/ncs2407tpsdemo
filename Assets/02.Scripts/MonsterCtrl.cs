@@ -23,6 +23,11 @@ public class MonsterCtrl : MonoBehaviour
     private NavMeshAgent agent;
     private Animator anim;
 
+    // Animator parameter의 Hash값 추출
+    private readonly int hashTrace = Animator.StringToHash("IsTrace");
+    private readonly int hashAttack = Animator.StringToHash("IsAttack");
+    private readonly int hashHit = Animator.StringToHash("Hit");
+
     void Start()
     {
         monsterTr = GetComponent<Transform>();
@@ -36,6 +41,16 @@ public class MonsterCtrl : MonoBehaviour
         StartCoroutine(MonsterAction());
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.CompareTag("BULLET"))
+        {
+            // 충돌한 총알을 삭제
+            Destroy(collision.gameObject);
+            anim.SetTrigger(hashHit);
+        }
+    }
+
     IEnumerator MonsterAction()
     {
         while (!isDie)
@@ -45,14 +60,16 @@ public class MonsterCtrl : MonoBehaviour
                 case State.IDLE:
                     agent.isStopped = true;
                     // Animator의 IsTrace변수를 false로 설정
-                    anim.SetBool("IsTrace", false);
+                    anim.SetBool(hashTrace, false);
                     break;
                 case State.ATTACK:
+                    anim.SetBool(hashAttack, true);
                     break;
                 case State.TRACE:
                     agent.SetDestination(playerTr.position);
                     agent.isStopped = false;
-                    anim.SetBool("IsTrace", true);
+                    anim.SetBool(hashTrace, true);
+                    anim.SetBool(hashAttack, false);
                     break;
                 case State.DIE:
                     break;
