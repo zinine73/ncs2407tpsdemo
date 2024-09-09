@@ -9,8 +9,13 @@ public class PlayerCtrl : MonoBehaviour
     public float moveSpeed = 8.0f;
     public float turnSpeed = 80.0f;
 
+    private readonly float initHp = 100.0f;
+    public float currHp;
+
     IEnumerator Start()
     {
+        currHp = initHp;
+
         tr = GetComponent<Transform>();
         anim = GetComponent<Animation>();
 
@@ -56,5 +61,23 @@ public class PlayerCtrl : MonoBehaviour
         {
             anim.CrossFade("Idle", 0.25f);
         }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (currHp >= 0.0f && other.CompareTag("PUNCH"))
+        {
+            currHp -= 10.0f;
+            Debug.Log($"Player hp = {currHp / initHp}");
+            if (currHp <= 0.0f)
+            {
+                PlayerDie();
+            }
+        }
+    }
+
+    private void PlayerDie()
+    {
+        Debug.Log("Player DIE !");
     }
 }

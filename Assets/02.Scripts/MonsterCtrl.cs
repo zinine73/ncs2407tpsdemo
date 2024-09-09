@@ -28,12 +28,18 @@ public class MonsterCtrl : MonoBehaviour
     private readonly int hashAttack = Animator.StringToHash("IsAttack");
     private readonly int hashHit = Animator.StringToHash("Hit");
 
+    // 혈흔효과 prefab
+    private GameObject bloodEffect;
+
     void Start()
     {
         monsterTr = GetComponent<Transform>();
         playerTr = GameObject.FindWithTag("PLAYER").GetComponent<Transform>();
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
+
+        // load bloodEffect prefab
+        bloodEffect = Resources.Load<GameObject>("BloodSprayEffect");
 
         // 몬스터의 상태를 체크하는 코루틴 호출
         StartCoroutine(CheckMonsterState());
@@ -48,7 +54,18 @@ public class MonsterCtrl : MonoBehaviour
             // 충돌한 총알을 삭제
             Destroy(collision.gameObject);
             anim.SetTrigger(hashHit);
+
+            Vector3 pos = collision.GetContact(0).point;
+            // 총알 충돌 지점의 법선벡터
+            Quaternion rot = Quaternion.LookRotation(-collision.GetContact(0).normal);
+            ShowBloodEffect(pos, rot);
         }
+    }
+
+    private void ShowBloodEffect(Vector3 pos, Quaternion rot)
+    {
+        GameObject blood = Instantiate<GameObject>(bloodEffect, pos, rot, monsterTr);
+        Destroy(blood, 1.0f);
     }
 
     IEnumerator MonsterAction()
