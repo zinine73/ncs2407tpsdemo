@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class FollowCam : MonoBehaviour
 {
-    // µû¶ó°¡¾ßÇÒ ´ë»óÀ» ¿¬°áÇÒ º¯¼ö
+    // ë”°ë¼ê°€ì•¼í•  ëŒ€ìƒì„ ì—°ê²°í•  ë³€ìˆ˜
     public Transform targetTr;
-    // Ä«¸Ş¶ó ÀÚ½ÅÀÇ transform
+    // ì¹´ë©”ë¼ ìì‹ ì˜ transform
     private Transform camTr;
 
     [Range(2.0f, 20.0f)]
@@ -32,7 +32,7 @@ public class FollowCam : MonoBehaviour
                         + (-targetTr.forward * distance)
                         + (Vector3.up * height);
 
-        // ±¸¸é¼±Çüº¸°£À» ÀÌ¿ëÇÑ ¹æ¹ı
+        // êµ¬ë©´ì„ í˜•ë³´ê°„ì„ ì´ìš©í•œ ë°©ë²•
         //camTr.position = Vector3.Slerp(camTr.position,
         //                                pos,
         //                                Time.deltaTime * damping);

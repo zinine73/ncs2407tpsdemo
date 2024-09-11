@@ -17,7 +17,7 @@ public class FireCtrl : MonoBehaviour
     {
         audio = GetComponent<AudioSource>();
 
-        // FirePos ÇÏÀ§¿¡ ÀÖ´Â MuzzleFlashÀÇ Material ÄÄÆ÷³ÍÆ® ÃßÃâ
+        // FirePos í•˜ìœ„ì— ìˆëŠ” MuzzleFlashì˜ Material ì»´í¬ë„ŒíŠ¸ ì¶”ì¶œ
         muzzleFlash = firePos.GetComponentInChildren<MeshRenderer>();
 
         muzzleFlash.enabled = false;
@@ -34,32 +34,32 @@ public class FireCtrl : MonoBehaviour
 
     void Fire()
     {
-        // Bullet prefabÀ» µ¿ÀûÀ¸·Î »ı¼º (»ı¼ºÇÒ °´Ã¼, À§Ä¡, È¸Àü)
+        // Bullet prefabì„ ë™ì ìœ¼ë¡œ ìƒì„± (ìƒì„±í•  ê°ì²´, ìœ„ì¹˜, íšŒì „)
         Instantiate(bullet, firePos.position, firePos.rotation);
 
         audio.PlayOneShot(fireSfx, 1.0f);
 
-        // ÃÑ±¸ È­¿° È¿°ú ÄÚ·çÆ¾ ÇÔ¼ö È£Ãâ
+        // ì´êµ¬ í™”ì—¼ íš¨ê³¼ ì½”ë£¨í‹´ í•¨ìˆ˜ í˜¸ì¶œ
         StartCoroutine(ShowMuzzleFlash());
     }
 
     IEnumerator ShowMuzzleFlash()
     {
-        // ¿ÀÇÁ¼Â ÁÂÇ¥°ªÀ» ·£´ıÇÔ¼ö·Î »ı¼º
+        // ì˜¤í”„ì…‹ ì¢Œí‘œê°’ì„ ëœë¤í•¨ìˆ˜ë¡œ ìƒì„±
         Vector2 offset = new Vector2(Random.Range(0, 2), Random.Range(0, 2)) * 0.5f;
         muzzleFlash.material.mainTextureOffset = offset;
 
-        // int°ªÀÇ RandomÀÏ¶§´Â max °ªÀº Æ÷ÇÔÇÏÁö ¾Ê´Â´Ù
+        // intê°’ì˜ Randomì¼ë•ŒëŠ” max ê°’ì€ í¬í•¨í•˜ì§€ ì•ŠëŠ”ë‹¤
         float angle = Random.Range(0, 360);
         muzzleFlash.transform.localRotation = Quaternion.Euler(0, 0, angle);
 
-        // float°ªÀÇ RandomÀÏ¶§´Â max °ª±îÁö Æ÷ÇÔÇÑ´Ù
+        // floatê°’ì˜ Randomì¼ë•ŒëŠ” max ê°’ê¹Œì§€ í¬í•¨í•œë‹¤
         float scale = Random.Range(1.0f, 1.5f);
         muzzleFlash.transform.localScale = Vector3.one * scale;
 
         muzzleFlash.enabled = true;
 
-        // 0.2ÃÊ µ¿¾È ´ë±âÇÏ´Â µ¿¾È ¸Ş½ÃÁö ·çÇÁ·Î Á¦¾î±Ç ¾çº¸
+        // 0.2ì´ˆ ë™ì•ˆ ëŒ€ê¸°í•˜ëŠ” ë™ì•ˆ ë©”ì‹œì§€ ë£¨í”„ë¡œ ì œì–´ê¶Œ ì–‘ë³´
         yield return new WaitForSeconds(0.2f);
 
         muzzleFlash.enabled = false;

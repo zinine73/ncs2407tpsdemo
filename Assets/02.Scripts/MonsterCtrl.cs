@@ -23,15 +23,32 @@ public class MonsterCtrl : MonoBehaviour
     private NavMeshAgent agent;
     private Animator anim;
 
-    // Animator parameterÀÇ Hash°ª ÃßÃâ
+    // Animator parameterì˜ Hashê°’ ì¶”ì¶œ
     private readonly int hashTrace = Animator.StringToHash("IsTrace");
     private readonly int hashAttack = Animator.StringToHash("IsAttack");
     private readonly int hashHit = Animator.StringToHash("Hit");
     private readonly int hashPlayerDie = Animator.StringToHash("PlayerDie");
     private readonly int hashSpeed = Animator.StringToHash("Speed");
+    private readonly int hashDie = Animator.StringToHash("Die");
 
-    // Ç÷ÈçÈ¿°ú prefab
+    private int hp = 100;
+
+    // í˜ˆí”íš¨ê³¼ prefab
     private GameObject bloodEffect;
+
+    // ìŠ¤í¬ë¦½íŠ¸ê°€ í™œì„±í™”ë ë•Œë§ˆë‹¤ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜
+    private void OnEnable()
+    {
+        // ì´ë²¤íŠ¸ ë°œìƒ ì‹œ ìˆ˜í–‰í•  í•¨ìˆ˜ ì—°ê²°
+        PlayerCtrl.OnPlayerDie += OnPlayerDie;
+    }
+
+    // ìŠ¤í¬ë¦½íŠ¸ê°€ ë¹„í™œì„±í™”ë ë•Œë§ˆë‹¤ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜
+    private void OnDisable()
+    {
+        // ì—°ê²°ëœ í•¨ìˆ˜ í•´ì œ
+        PlayerCtrl.OnPlayerDie -= OnPlayerDie;
+    }
 
     void Start()
     {
@@ -43,9 +60,9 @@ public class MonsterCtrl : MonoBehaviour
         // load bloodEffect prefab
         bloodEffect = Resources.Load<GameObject>("BloodSprayEffect");
 
-        // ¸ó½ºÅÍÀÇ »óÅÂ¸¦ Ã¼Å©ÇÏ´Â ÄÚ·çÆ¾ È£Ãâ
+        // ëª¬ìŠ¤í„°ì˜ ìƒíƒœë¥¼ ì²´í¬í•˜ëŠ” ì½”ë£¨í‹´ í˜¸ì¶œ
         StartCoroutine(CheckMonsterState());
-        // »óÅÂ¿¡ µû¶ó ¸ó½ºÅÍÀÇ Çàµ¿À» ¼öÇàÇÏ´Â ÄÚ·çÆ¾ È£Ãâ
+        // ìƒíƒœì— ë”°ë¼ ëª¬ìŠ¤í„°ì˜ í–‰ë™ì„ ìˆ˜í–‰í•˜ëŠ” ì½”ë£¨í‹´ í˜¸ì¶œ
         StartCoroutine(MonsterAction());
     }
 
@@ -53,14 +70,20 @@ public class MonsterCtrl : MonoBehaviour
     {
         if (collision.collider.CompareTag("BULLET"))
         {
-            // Ãæµ¹ÇÑ ÃÑ¾ËÀ» »èÁ¦
+            // ì¶©ëŒí•œ ì´ì•Œì„ ì‚­ì œ
             Destroy(collision.gameObject);
             anim.SetTrigger(hashHit);
 
             Vector3 pos = collision.GetContact(0).point;
-            // ÃÑ¾Ë Ãæµ¹ ÁöÁ¡ÀÇ ¹ı¼±º¤ÅÍ
+            // ì´ì•Œ ì¶©ëŒ ì§€ì ì˜ ë²•ì„ ë²¡í„°
             Quaternion rot = Quaternion.LookRotation(-collision.GetContact(0).normal);
             ShowBloodEffect(pos, rot);
+
+            hp -= 10;
+            if (hp <= 0)
+            {
+                state = State.DIE;
+            }
         }
     }
 
@@ -78,7 +101,7 @@ public class MonsterCtrl : MonoBehaviour
             {
                 case State.IDLE:
                     agent.isStopped = true;
-                    // AnimatorÀÇ IsTraceº¯¼ö¸¦ false·Î ¼³Á¤
+                    // Animatorì˜ IsTraceë³€ìˆ˜ë¥¼ falseë¡œ ì„¤ì •
                     anim.SetBool(hashTrace, false);
                     break;
                 case State.ATTACK:
@@ -91,6 +114,17 @@ public class MonsterCtrl : MonoBehaviour
                     anim.SetBool(hashAttack, false);
                     break;
                 case State.DIE:
+                    isDie = true;
+                    agent.isStopped = true;
+                    anim.SetTrigger(hashDie);
+                    // ëª¬ìŠ¤í„°ì˜ Collider component ë¹„í™œì„±í™”
+                    GetComponent<CapsuleCollider>().enabled = false;
+                    // ëª¬ìŠ¤í„° ì†ì— ìˆëŠ” PUNCH ë¹„í™œì„±í™”
+                    SphereCollider[] sc = GetComponentsInChildren<SphereCollider>();
+                    foreach (var item in sc)
+                    {
+                        item.enabled = false;
+                    }
                     break;
             }
             yield return new WaitForSeconds(0.3f);
@@ -101,8 +135,10 @@ public class MonsterCtrl : MonoBehaviour
     {
         while(!isDie)
         {
-            // 0.3ÃÊ ÁßÁö ÇÏ´Â µ¿¾È ¾çº¸
+            // 0.3ì´ˆ ì¤‘ì§€ í•˜ëŠ” ë™ì•ˆ ì–‘ë³´
             yield return new WaitForSeconds(0.3f);
+
+            if (state == State.DIE) yield break;
 
             float distance = Vector3.Distance(playerTr.position, monsterTr.position);
 

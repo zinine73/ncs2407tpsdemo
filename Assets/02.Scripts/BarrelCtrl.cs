@@ -8,7 +8,7 @@ public class BarrelCtrl : MonoBehaviour
 {
     #region Public
     public GameObject expEffect;
-    // ¹«ÀÛÀ§·Î Àû¿ëÇÒ ÅØ½ºÃÄ ¹è¿­
+    // ë¬´ì‘ìœ„ë¡œ ì ìš©í•  í…ìŠ¤ì³ ë°°ì—´
     public Texture[] textures;
     public float radius = 10.0f;
     #endregion
@@ -27,7 +27,7 @@ public class BarrelCtrl : MonoBehaviour
         tr = GetComponent<Transform>();
         //rb = GetComponent<Rigidbody>();
 
-        // ÇÏÀ§¿¡ ÀÖ´Â MeshRenderer ÃßÃâ
+        // í•˜ìœ„ì— ìˆëŠ” MeshRenderer ì¶”ì¶œ
         renderer = GetComponentInChildren<MeshRenderer>();
 
         int idx = Random.Range(0, textures.Length);
@@ -35,7 +35,7 @@ public class BarrelCtrl : MonoBehaviour
     }
 
     /// <summary>
-    /// Ãæµ¹ ½Ã ¹ß»ıÇÏ´Â Äİ¹éÇÔ¼ö
+    /// ì¶©ëŒ ì‹œ ë°œìƒí•˜ëŠ” ì½œë°±í•¨ìˆ˜
     /// </summary>
     /// <param name="collision"></param>
     void OnCollisionEnter(Collision collision) 
@@ -51,17 +51,17 @@ public class BarrelCtrl : MonoBehaviour
 
     void ExpBarrel()
     {
-        // Æø¹ß È¿°ú ÆÄÆ¼Å¬ µ¿Àû »ı¼º
+        // í­ë°œ íš¨ê³¼ íŒŒí‹°í´ ë™ì  ìƒì„±
         GameObject exp = Instantiate(expEffect, tr.position, Quaternion.identity);
 
-        // Æø¹ß È¿°ú ÆÄÆ¼Å¬ 5ÃÊ ÈÄ¿¡ Á¦°Å
+        // í­ë°œ íš¨ê³¼ íŒŒí‹°í´ 5ì´ˆ í›„ì— ì œê±°
         Destroy(exp, 5.0f);
 
         //rb.mass = 1.0f;
-        // À§·Î ¼Ú±¸Ä¡´Â ÈûÀ» °¡ÇÑ´Ù
+        // ìœ„ë¡œ ì†Ÿêµ¬ì¹˜ëŠ” í˜ì„ ê°€í•œë‹¤
         //rb.AddForce(Vector3.up * 1500.0f);
 
-        // °£Á¢ Æø¹ß·Â Àü´Ş
+        // ê°„ì ‘ í­ë°œë ¥ ì „ë‹¬
         IndirectDamage(tr.position);
 
         Destroy(gameObject, 3.0f);
@@ -69,10 +69,10 @@ public class BarrelCtrl : MonoBehaviour
 
     void IndirectDamage(Vector3 pos)
     {
-        // ÁÖº¯¿¡ ÀÖ´Â µå·³ÅëÀ» ¸ğµÎ ÃßÃâ (GC°¡ ¹ß»ı)
+        // ì£¼ë³€ì— ìˆëŠ” ë“œëŸ¼í†µì„ ëª¨ë‘ ì¶”ì¶œ (GCê°€ ë°œìƒ)
         //Collider[] colls = Physics.OverlapSphere(pos, radius, 1 << 3);
 
-        // GC¹ß»ıÇÏÁö ¾ÊÀ½
+        // GCë°œìƒí•˜ì§€ ì•ŠìŒ
         Physics.OverlapSphereNonAlloc(pos, radius, colls, 1 << 3);
 
         foreach (var coll in colls)

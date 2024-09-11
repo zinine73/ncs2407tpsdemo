@@ -11,7 +11,7 @@ public class RemoveBullet : MonoBehaviour
         if (collision.collider.CompareTag("BULLET"))
         {
             ContactPoint cp = collision.GetContact(0);
-            // Ãæµ¹ÇÑ ÃÑ¾ËÀÇ ¹ı¼±º¤ÅÍ¸¦ ÄõÅÍ´Ï¾ğÀ¸·Î º¯È¯
+            // ì¶©ëŒí•œ ì´ì•Œì˜ ë²•ì„ ë²¡í„°ë¥¼ ì¿¼í„°ë‹ˆì–¸ìœ¼ë¡œ ë³€í™˜
             Quaternion rot = Quaternion.LookRotation(-cp.normal);
 
             GameObject spark = Instantiate(sparkEffect, cp.point, rot);
