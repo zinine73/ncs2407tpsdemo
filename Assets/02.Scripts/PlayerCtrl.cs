@@ -14,9 +14,9 @@ public class PlayerCtrl : MonoBehaviour
     public float currHp;
     private Image hpBar;
 
-    // µ¨¸®°ÔÀÌÆ® ¼±¾ğ
+    // ë¸ë¦¬ê²Œì´íŠ¸ ì„ ì–¸
     public delegate void PlayerDieHandler();
-    // ÀÌº¥Æ® ¼±¾ğ
+    // ì´ë²¤íŠ¸ ì„ ì–¸
     public static event PlayerDieHandler OnPlayerDie;
 
     IEnumerator Start()
@@ -90,6 +90,10 @@ public class PlayerCtrl : MonoBehaviour
     {
         Debug.Log("Player DIE !");
         OnPlayerDie();
+
+        // GameManager scriptì˜ IsGameOver property ê°’ì„ ë³€ê²½
+        //GameObject.Find("GameMgr").GetComponent<GameManager>().IsGameOver = true;
+        GameManager.instance.IsGameOver = true;
     }
 
     private void DisplayHealth()
