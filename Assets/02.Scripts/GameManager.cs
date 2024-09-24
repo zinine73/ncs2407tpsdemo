@@ -7,6 +7,12 @@ public class GameManager : MonoBehaviour
     // 몬스터가 출현할 위치를 저장할 List
     public List<Transform> points = new List<Transform>();
 
+    // 몬스터를 미리 생성해 저장할 리스트
+    public List<GameObject> monsterPool = new List<GameObject>();
+
+    // 오브젝트 풀(Object Pool) 에 생성할 몬스터의 최대 갯수
+    public int maxMonsters = 10;
+
     public GameObject monster;
     public float createTime = 3.0f;
     private bool isGameOver;
@@ -44,11 +50,13 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        // 몬스터 오브젝트 풀 생성
+        CreateMonsterPool();
+
         // SpawnPointGroup의 Transform 추출
         Transform spawnPointGroup = GameObject.Find("SpawnPointGroup")?.transform;
 
         // SpawnPointGroup 하위에 있는 모든 차일드 오브젝트의 Transform 추출
-        //spawnPointGroup?.GetComponentsInChildren<Transform>(points);
         foreach (Transform point in spawnPointGroup)
         {
             points.Add(point);
@@ -60,7 +68,44 @@ public class GameManager : MonoBehaviour
 
     private void CreateMonster()
     {
+        // 몬스터의 불규칙한 생성 위치 산출
         int idx = Random.Range(0, points.Count);
-        Instantiate(monster, points[idx].position, points[idx].rotation);
+        // 오브젝트 풀에서 몬스터 추출
+        GameObject _monster = GetMonsterInPool();
+        // 추출한 몬스터의 위치와 회전을 설정
+        _monster?.transform.SetPositionAndRotation(points[idx].position, points[idx].rotation);
+        // 몬스터 활성화
+        _monster?.SetActive(true);
+    }
+
+    private void CreateMonsterPool()
+    {
+        for (int i = 0; i < maxMonsters; i++)
+        {
+            // 몬스터 생성
+            var _monster = Instantiate<GameObject>(monster);
+            // 몬스터 이름을 지정
+            _monster.name = $"Monster_{i:00}";
+            //_monster.name = "Monster_" + i.ToString("00");
+            // 몬스터 비활성화
+            _monster.SetActive(false);
+            // 생성한 몬스터를 오브젝트 풀에 추가
+            monsterPool.Add(_monster);
+        }
+    }
+
+    public GameObject GetMonsterInPool()
+    {
+        // 오브젝트 풀의 처음부터 끝까지 순회
+        foreach (var _monster in monsterPool)
+        {
+            // 비활성화 여부로 사용 가능한 몬스터를 판단
+            if (_monster.activeSelf == false)
+            {
+                // 몬스터 반환
+                return _monster;
+            }
+        }
+        return null;
     }
 }

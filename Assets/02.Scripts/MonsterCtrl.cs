@@ -36,21 +36,7 @@ public class MonsterCtrl : MonoBehaviour
     // 혈흔효과 prefab
     private GameObject bloodEffect;
 
-    // 스크립트가 활성화될때마다 호출되는 함수
-    private void OnEnable()
-    {
-        // 이벤트 발생 시 수행할 함수 연결
-        PlayerCtrl.OnPlayerDie += OnPlayerDie;
-    }
-
-    // 스크립트가 비활성화될때마다 호출되는 함수
-    private void OnDisable()
-    {
-        // 연결된 함수 해제
-        PlayerCtrl.OnPlayerDie -= OnPlayerDie;
-    }
-
-    void Start()
+    private void Awake()
     {
         monsterTr = GetComponent<Transform>();
         playerTr = GameObject.FindWithTag("PLAYER").GetComponent<Transform>();
@@ -59,11 +45,25 @@ public class MonsterCtrl : MonoBehaviour
 
         // load bloodEffect prefab
         bloodEffect = Resources.Load<GameObject>("BloodSprayEffect");
+    }
+
+    // 스크립트가 활성화될때마다 호출되는 함수
+    private void OnEnable()
+    {
+        // 이벤트 발생 시 수행할 함수 연결
+        PlayerCtrl.OnPlayerDie += OnPlayerDie;
 
         // 몬스터의 상태를 체크하는 코루틴 호출
         StartCoroutine(CheckMonsterState());
         // 상태에 따라 몬스터의 행동을 수행하는 코루틴 호출
         StartCoroutine(MonsterAction());
+    }
+
+    // 스크립트가 비활성화될때마다 호출되는 함수
+    private void OnDisable()
+    {
+        // 연결된 함수 해제
+        PlayerCtrl.OnPlayerDie -= OnPlayerDie;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -125,6 +125,23 @@ public class MonsterCtrl : MonoBehaviour
                     {
                         item.enabled = false;
                     }
+
+                    // 일정 시간 대기 후 오브젝트 풀링으로 환원
+                    yield return new WaitForSeconds(3.0f);
+                    // 사망 후 다시 사용할 때를 위해 hp 값 초기화
+                    hp = 100;
+                    isDie = false;
+                    // 몬스터의 Collider 컴포넌트 활성화
+                    GetComponent<CapsuleCollider>().enabled = true;
+                    // punch 활성화
+                    foreach (var item in sc)
+                    {
+                        item.enabled = true;
+                    }
+                    // 몬스터 상태를 Idle 로 변환
+                    this.state = State.IDLE;
+                    // 몬스터를 비활성화
+                    this.gameObject.SetActive(false);
                     break;
             }
             yield return new WaitForSeconds(0.3f);
