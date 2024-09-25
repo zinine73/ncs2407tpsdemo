@@ -13,6 +13,9 @@ public class MonsterCtrl : MonoBehaviour
         DIE
     }
 
+    private const int MONSTER_SCORE = 50;
+    private const int MONSTER_HIT_DAMAGE = 10;
+    private const int MONSTER_MAX_HP = 100;
     public State state = State.IDLE;
     public float traceDist = 10.0f;
     public float attackDist = 2.0f;
@@ -31,7 +34,7 @@ public class MonsterCtrl : MonoBehaviour
     private readonly int hashSpeed = Animator.StringToHash("Speed");
     private readonly int hashDie = Animator.StringToHash("Die");
 
-    private int hp = 100;
+    private int hp = MONSTER_MAX_HP;
 
     // 혈흔효과 prefab
     private GameObject bloodEffect;
@@ -79,10 +82,12 @@ public class MonsterCtrl : MonoBehaviour
             Quaternion rot = Quaternion.LookRotation(-collision.GetContact(0).normal);
             ShowBloodEffect(pos, rot);
 
-            hp -= 10;
+            hp -= MONSTER_HIT_DAMAGE;
             if (hp <= 0)
             {
                 state = State.DIE;
+                // 몬스터가 사망했을 때 주어진 점수를 추가
+                GameManager.instance.DisplayScore(MONSTER_SCORE);
             }
         }
     }

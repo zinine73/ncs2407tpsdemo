@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEditor;
 
 public class GameManager : MonoBehaviour
 {
@@ -31,6 +33,9 @@ public class GameManager : MonoBehaviour
     // 싱글턴 인스턴스 선언
     public static GameManager instance = null;
 
+    [SerializeField] private TMP_Text scoreText;
+    private int totScore = 0;
+
     private void Awake()
     {
         // instance가 할당되지 않은 경우
@@ -48,7 +53,7 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
     }
 
-    void Start()
+    private void Start()
     {
         // 몬스터 오브젝트 풀 생성
         CreateMonsterPool();
@@ -64,6 +69,9 @@ public class GameManager : MonoBehaviour
 
         // 일정한 시간 간격으로 함수 호출
         InvokeRepeating("CreateMonster", 2.0f, createTime);
+
+        totScore = PlayerPrefs.GetInt("TOT_SCORE", 0);
+        DisplayScore(0);
     }
 
     private void CreateMonster()
@@ -108,4 +116,24 @@ public class GameManager : MonoBehaviour
         }
         return null;
     }
+
+    /// <summary>
+    /// 점수를 누적하고 출력하는 함수
+    /// </summary>
+    /// <param name="score">누적할 점수</param>
+    public void DisplayScore(int score)
+    {
+        totScore += score;
+        scoreText.text = $"<color=#00ff00>SCORE : </color><color=#ff0000>{totScore:#,##0}</color>";
+        // 스코어 저장
+        PlayerPrefs.SetInt("TOT_SCORE", totScore);
+    }
+
+#if UNITY_EDITOR
+    [MenuItem("SpaceShooter/Reset Score", false, 1)]
+    public static void ResetPlayerPrefs()
+    {
+        PlayerPrefs.DeleteAll();
+    }
+#endif
 }
