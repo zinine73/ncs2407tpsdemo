@@ -12,6 +12,9 @@ public class FireCtrl : MonoBehaviour
     private new AudioSource audio;
     private MeshRenderer muzzleFlash;
 
+    // Raycast결과값을 저장하기 위한 구조체 선언
+    private RaycastHit hit;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -26,9 +29,24 @@ public class FireCtrl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Ray를 시각적으로 표시하기 위해 사용
+        Debug.DrawRay(firePos.position, firePos.forward * 10.0f, Color.green);
+
         if (Input.GetMouseButtonDown(0))
         {
             Fire();
+
+            // Ray를 발사
+            if (Physics.Raycast(firePos.position,   // 광선의 발사 원점
+                                firePos.forward,    // 광선의 발사 방향
+                                out hit,            // 광선에 맞은 결과 데이터
+                                10.0f,              // 광선의 거리
+                                1 << 6))            // 감지하는 범위인 레이어 마스크
+            {
+                Debug.Log($"Hit={hit.transform.name}");
+                hit.transform.GetComponent<MonsterCtrl>()?
+                    .OnDamage(hit.point, hit.normal);
+            }
         }
     }
 

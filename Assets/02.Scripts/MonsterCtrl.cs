@@ -75,20 +75,22 @@ public class MonsterCtrl : MonoBehaviour
         {
             // 충돌한 총알을 삭제
             Destroy(collision.gameObject);
-            anim.SetTrigger(hashHit);
+        }
+    }
 
-            Vector3 pos = collision.GetContact(0).point;
-            // 총알 충돌 지점의 법선벡터
-            Quaternion rot = Quaternion.LookRotation(-collision.GetContact(0).normal);
-            ShowBloodEffect(pos, rot);
+    public void OnDamage(Vector3 pos, Vector3 normal)
+    {
+        anim.SetTrigger(hashHit);
+        // 총알 충돌 지점의 법선벡터
+        Quaternion rot = Quaternion.LookRotation(normal);
+        ShowBloodEffect(pos, rot);
 
-            hp -= MONSTER_HIT_DAMAGE;
-            if (hp <= 0)
-            {
-                state = State.DIE;
-                // 몬스터가 사망했을 때 주어진 점수를 추가
-                GameManager.instance.DisplayScore(MONSTER_SCORE);
-            }
+        hp -= MONSTER_HIT_DAMAGE;
+        if (hp <= 0)
+        {
+            state = State.DIE;
+            // 몬스터가 사망했을 때 주어진 점수를 추가
+            GameManager.instance.DisplayScore(MONSTER_SCORE);
         }
     }
 
