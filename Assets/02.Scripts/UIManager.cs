@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -14,19 +15,25 @@ public class UIManager : MonoBehaviour
 
     void Start()
     {
-        // UnityActionÀ» »ç¿ëÇÑ ÀÌº¥Æ® ¿¬°á ¹æ½Ä
-        action = () => OnButtonClick(startButton.name);
+        // UnityActionì„ ì‚¬ìš©í•œ ì´ë²¤íŠ¸ ì—°ê²° ë°©ì‹
+        action = () => OnStartClick();
         startButton.onClick.AddListener(action);
 
-        // ¹«¸í¸Þ¼­µå¸¦ »ç¿ëÇÑ ÀÌº¥Æ® ¿¬°á ¹æ½Ä
+        // ë¬´ëª…ë©”ì„œë“œë¥¼ í™œìš©í•œ ì´ë²¤íŠ¸ ì—°ê²° ë°©ì‹
         optionButton.onClick.AddListener(delegate { OnButtonClick(optionButton.name); });
 
-        // ¶÷´Ù½ÄÀ» »ç¿ëÇÑ ÀÌº¥Æ® ¿¬°á ¹æ½Ä
+        // ëžŒë‹¤ì‹ì„ í™œìš©í•œ ì´ë²¤íŠ¸ ì—°ê²° ë°©ì‹
         shopButton.onClick.AddListener(() => OnButtonClick(shopButton.name));
     }
 
     public void OnButtonClick(string msg)
     {
         Debug.Log($"Click Button : {msg}");
+    }
+
+    public void OnStartClick()
+    {
+        SceneManager.LoadScene("Level_01");
+        SceneManager.LoadScene("Play", LoadSceneMode.Additive);
     }
 }
